@@ -1,0 +1,259 @@
+<section class="bg-white py-2 antialiased dark:bg-gray-900 md:py-4 rounded-lg">
+  <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+    <!-- Encabezado -->
+    <div class="gap-4 sm:flex sm:items-center sm:justify-between text-center sm:text-left">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl p-4">Administrar Solicitudes</h2>
+
+      <!-- Filtro por estado -->
+      <div class="mt-6 sm:mt-0 p-4">
+        <label for="filter-status" class="sr-only">Filtrar por estado</label>
+        <select id="filter-status"
+          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+          (change)="onFilterChange($event)">
+          <option value="todo">Todo</option>
+          <option value="pendiente">Pendiente</option>
+          <option value="prestamo">En préstamo</option>
+          <option value="no_devuelto">No devuelto</option>
+        </select>
+      </div>
+    </div>
+    <div class="overflow-x-auto rounded-lg">
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 rounded-lg">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" class="p-4">Usuario</th>
+            <th scope="col" class="p-4">Corresponsal</th>
+            <th scope="col" class="p-4">Tipo de solicitud</th>
+            <th scope="col" class="p-4">Fecha retorno</th>
+            <th scope="col" class="p-4">Estado</th>
+            <th scope="col" class="p-4">Comprobante</th>
+            <th scope="col" class="p-4">Detalles</th>
+            <th scope="col" class="p-4 text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let request of filteredRequests"
+            class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
+            <!-- Usuario -->
+            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              {{ request.user.name }} {{request.user.lastName}}
+            </td>
+
+            <!-- Responsable -->
+            <td class="px-4 py-3 font-medium text-gray-900 dark:text-white max-w-[200px] break-words">
+              {{ request.responsible }}
+            </td>
+
+            <!-- Tipo de solicitud -->
+            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              {{ request.typeRequest }}
+            </td>
+
+            <!-- Fecha retorno -->
+            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              {{ request.returnDate | date:'dd/MM/yyyy HH:mm' }}
+            </td>
+
+            <!-- Estado -->
+            <td class="px-4 py-3">
+              <span [ngClass]="{
+                        'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300': request.status === 'pendiente',
+                        'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300': request.status === 'prestamo',
+                        'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300': request.status === 'no_devuelto'
+                    }" class="text-xs font-medium px-2.5 py-0.5 rounded">
+                {{ request.status }}
+              </span>
+            </td>
+
+            <!-- Comprobante -->
+            <td class="px-4 py-3">
+              <button (click)="openProof(apiUrl + request.fileUrl)" type="button"
+                class="rounded-lg p-2 text-gray-800 hover:text-primary-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:text-white dark:hover:text-primary-300 dark:focus:ring-gray-700">
+                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                  viewBox="0 0 24 24">
+                  <path fill-rule="evenodd"
+                    d="M8 7V2.221a2 2 0 0 0-.5.365L3.586 6.5a2 2 0 0 0-.365.5H8Zm2 0V2h7a2 2 0 0 1 2 2v.126a5.087 5.087 0 0 0-4.74 1.368v.001l-6.642 6.642a3 3 0 0 0-.82 1.532l-.74 3.692a3 3 0 0 0 3.53 3.53l3.694-.738a3 3 0 0 0 1.532-.82L19 15.149V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9h5a2 2 0 0 0 2-2Z"
+                    clip-rule="evenodd" />
+                  <path fill-rule="evenodd"
+                    d="M17.447 8.08a1.087 1.087 0 0 1 1.187.238l.002.001a1.088 1.088 0 0 1 0 1.539l-.377.377-1.54-1.542.373-.374.002-.001c.1-.102.22-.182.353-.237Zm-2.143 2.027-4.644 4.644-.385 1.924 1.925-.385 4.644-4.642-1.54-1.54Zm2.56-4.11a3.087 3.087 0 0 0-2.187.909l-6.645 6.645a1 1 0 0 0-.274.51l-.739 3.693a1 1 0 0 0 1.177 1.176l3.693-.738a1 1 0 0 0 .51-.274l6.65-6.646a3.088 3.088 0 0 0-2.185-5.275Z"
+                    clip-rule="evenodd" />
+                </svg>
+                <span class="sr-only">Visualizar comprobante</span>
+              </button>
+            </td>
+
+            <!-- Detalles -->
+            <td class="px-4 py-3">
+              <button (click)="openDetails(request.requestId)"
+                class="inline-flex justify-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">
+                Ver detalles
+              </button>
+            </td>
+
+            <!-- Acciones -->
+            <td class="px-4 py-3">
+              <div class="flex items-center space-x-4">
+                <!-- Botones aceptar y rechazar si el estado es "pendiente" -->
+                <ng-container *ngIf="request.status === 'pendiente'">
+                  <button (click)="acceptRequest(request.requestId)"
+                    class="py-2 px-3 flex items-center text-sm font-medium text-center text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300">
+                    Aceptar
+                  </button>
+                  <button (click)="rejectRequest(request.requestId)"
+                    class="py-2 px-3 flex items-center text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300">
+                    Rechazar
+                  </button>
+                </ng-container>
+
+                <!-- Botones para estado préstamo -->
+                <ng-container *ngIf="request.status === 'prestamo'">
+                  <button (click)="markAsNotReturned(request.requestId)"
+                    class="py-2 px-3 flex items-center text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300">
+                    No devuelto
+                  </button>
+                  <button (click)="finalizeRequest(request.requestId)"
+                    class="py-2 px-3 flex items-center text-sm font-medium text-center text-white bg-yellow-600 rounded-lg hover:bg-yellow-700 focus:ring-4 focus:outline-none focus:ring-yellow-300">
+                    Finalizar
+                  </button>
+                </ng-container>
+
+                <!-- Botón finalizar para estado no devuelto -->
+                <ng-container *ngIf="request.status === 'no_devuelto'">
+                  <button (click)="finalizeRequest(request.requestId)"
+                    class="py-2 px-3 flex items-center text-sm font-medium text-center text-white bg-yellow-600 rounded-lg hover:bg-yellow-700 focus:ring-4 focus:outline-none focus:ring-yellow-300">
+                    Finalizar
+                  </button>
+                </ng-container>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Modal de detalles -->
+<div *ngIf="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+  <div
+    class="w-full max-w-xl lg:max-w-2xl divide-y divide-gray-200 overflow-hidden rounded-lg border border-gray-200 dark:divide-gray-700 dark:border-gray-700 bg-white dark:bg-gray-800">
+    <div *ngFor="let detail of modalDetails" class="max-h-[80vh] overflow-y-auto space-y-4 p-6">
+      <!-- Componente 1 -->
+      <div class="flex items-center gap-6">
+        <a class="h-14 w-14 shrink-0">
+          <img class="h-full w-full rounded-lg" [src]="apiUrl +detail.imageUrl" [alt]="detail.name" />
+        </a>
+        <div class="min-w-0 flex-1">
+          <p class="font-medium text-gray-900 dark:text-white">
+            {{ detail.name }}
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center justify-between">
+        <p class="text-sm font-normal text-gray-500 dark:text-gray-400">
+          <span class="font-medium text-gray-900 dark:text-white">Categoría:</span>
+          {{ detail.category }}
+        </p>
+        <div class="flex items-center">
+          <p class="text-base font-normal text-gray-900 dark:text-white">x{{ detail.quantity }}</p>
+          <span class="ml-2 text-gray-900 dark:text-white">Cantidad</span>
+        </div>
+      </div>
+    </div>
+    <div class="flex justify-end gap-4 p-4">
+      <button (click)="closeModal()"
+        class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-700 dark:hover:bg-red-800 dark:focus:ring-red-800">
+        Cerrar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Comprobante -->
+<div *ngIf="isProofModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+  <!-- Modal container con media queries para diferentes tamaños -->
+  <div class="relative w-full bg-white rounded-lg shadow-lg dark:bg-gray-800
+              sm:w-11/12 
+              md:w-10/12 
+              lg:w-4/5 
+              xl:w-3/4 
+              2xl:w-2/3">
+
+    <div class="relative">
+      <!-- Loading spinner -->
+      <div *ngIf="isLoading" class="absolute inset-0 flex items-center justify-center">
+        <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-700"></div>
+      </div>
+
+      <!-- PDF Viewer con tamaños responsivos -->
+      <ng-container *ngIf="proofUrl && pdfType === 'pdf'">
+        <!-- Vista móvil: enlace de descarga -->
+        <div class="block sm:hidden p-4 text-center">
+          <p class="text-gray-600 dark:text-gray-300 mb-4">
+            Para una mejor visualización en dispositivos móviles, puedes:
+          </p>
+          <a [href]="proofUrl" download
+            class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Descargar PDF
+          </a>
+        </div>
+
+        <!-- Vista desktop: iframe -->
+        <iframe class="hidden sm:block w-full rounded-lg
+                     sm:h-[60vh]
+                     md:h-[65vh]
+                     lg:h-[70vh]
+                     xl:h-[75vh]
+                     2xl:h-[80vh]" [src]="proofUrl" frameborder="0" title="PDF Viewer">
+          <p>Tu navegador no soporta la visualización de PDFs.</p>
+        </iframe>
+      </ng-container>
+
+      <!-- Image Viewer con tamaños responsivos -->
+      <img *ngIf="proofUrl && pdfType === 'image'" [src]="proofUrl" class="w-full rounded-lg object-contain
+                  sm:h-[60vh]
+                  md:h-[65vh]
+                  lg:h-[70vh]
+                  xl:h-[75vh]
+                  2xl:h-[80vh]" alt="Comprobante" />
+
+      <!-- Botón Cerrar con posición mejorada -->
+      <button (click)="closeProofModal()" class="absolute -top-4 -right-4 rounded-full bg-red-600 p-2 text-white hover:bg-red-700 shadow-lg
+                     flex items-center justify-center w-8 h-8
+                     transform transition-transform hover:scale-110">
+        <span class="sr-only">Cerrar</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para agregar observaciones -->
+<div *ngIf="isAdminNotesModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+  <div class="w-full max-w-lg rounded-lg bg-white p-6 shadow dark:bg-gray-800">
+    <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
+      {{ isRejectionAction ? 'Motivo del rechazo' : 'Agregar Observación' }}
+    </h3>
+    <textarea [(ngModel)]="adminNotes" rows="4"
+      class="w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+      [placeholder]="isRejectionAction ? 'Escriba el motivo del rechazo aquí...' : 'Escriba su observación aquí...'"
+      required>
+    </textarea>
+    <div class="mt-4 flex justify-end gap-2">
+      <button (click)="closeAdminNotesModal()"
+        class="rounded-lg bg-gray-600 px-3 py-2 text-sm font-medium text-white hover:bg-gray-700">
+        Cancelar
+      </button>
+      <button (click)="saveAdminNotes()" [disabled]="!adminNotes.trim()"
+        class="rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed">
+        {{ isRejectionAction ? 'Rechazar solicitud' : 'Guardar y Continuar' }}
+      </button>
+    </div>
+  </div>
+</div>

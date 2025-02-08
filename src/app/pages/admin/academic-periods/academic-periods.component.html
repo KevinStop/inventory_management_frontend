@@ -1,0 +1,114 @@
+<section class="bg-white py-8 dark:bg-gray-900 rounded-lg">
+  <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+    <div class="mx-auto max-w-5xl">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
+        Gestión de Períodos Académicos
+      </h2>
+
+      <!-- Mostrar período activo -->
+      <div class="mt-6">
+        <div *ngIf="activePeriod; else noActivePeriod" class="flex items-center justify-between">
+          <p class="text-lg text-gray-700 dark:text-gray-200">
+            Período Activo: <strong>{{ activePeriod.name }}</strong> ({{ activePeriod.startDate | date: 'dd/MM/yyyy' }}
+            - {{ activePeriod.endDate | date: 'dd/MM/yyyy' }})
+          </p>
+          <div>
+            <button (click)="isEdit ? openCreateForm() : openEditForm()"
+              class="px-4 py-2 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300">
+              {{ isEdit ? 'Crear Período' : 'Editar Período' }}
+            </button>
+            <button (click)="toggleInactiveTable()"
+              class="ml-2 px-4 py-2 text-sm bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:ring-4 focus:ring-gray-300">
+              {{ showInactiveTable ? 'Ocultar Inactivos' : 'Ver Inactivos' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- No hay período activo -->
+        <ng-template #noActivePeriod>
+          <button (click)="openCreateForm()"
+            class="mt-4 px-4 py-2 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300">
+            Asignar Período Académico
+          </button>
+        </ng-template>
+      </div>
+
+      <!-- Formulario para crear/editar período -->
+      <div *ngIf="!showInactiveTable" class="mt-8 bg-gray-100 dark:bg-gray-800 p-6 rounded-lg">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white text-center mb-4">
+          {{ isEdit ? 'Editar Período Académico' : 'Nuevo Período Académico' }}
+        </h3>
+        <form [formGroup]="periodForm" (ngSubmit)="savePeriod()" class="space-y-4">
+          <div>
+            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre</label>
+            <input type="text" formControlName="name"
+              class="w-full p-2 text-sm border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:ring-primary-300 focus:border-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              placeholder="Ejemplo: 2024-1" />
+            <p *ngIf="periodForm.get('name')?.invalid && periodForm.get('name')?.touched" class="text-red-500 text-sm">
+              El nombre es obligatorio y debe tener al menos 3 caracteres.
+            </p>
+          </div>
+          <div>
+            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Fecha de Inicio</label>
+            <input type="date" formControlName="startDate"
+              class="w-full p-2 text-sm border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:ring-primary-300 focus:border-primary-300 
+  [color-scheme:light] dark:[color-scheme:dark]
+  dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500" />
+            <p *ngIf="periodForm.get('startDate')?.invalid && periodForm.get('startDate')?.touched"
+              class="text-red-500 text-sm">
+              La fecha de inicio es obligatoria.
+            </p>
+          </div>
+          <div>
+            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Fecha de Fin</label>
+            <input type="date" formControlName="endDate"
+              class="w-full p-2 text-sm border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:ring-primary-300 focus:border-primary-300 
+            [color-scheme:light] dark:[color-scheme:dark]
+            dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 dark:focus:ring-primary-500 dark:focus:border-primary-500" />
+            <p *ngIf="periodForm.get('endDate')?.invalid && periodForm.get('endDate')?.touched"
+              class="text-red-500 text-sm">
+              La fecha de fin es obligatoria.
+            </p>
+            <p *ngIf="periodForm.errors?.['dateRangeInvalid'] && periodForm.get('endDate')?.touched"
+              class="text-red-500 text-sm">
+              La fecha de fin debe ser posterior a la fecha de inicio.
+            </p>
+          </div>
+          <button type="submit"
+            class="px-5 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-500">
+            {{ isEdit ? 'Actualizar' : 'Guardar' }}
+          </button>
+        </form>
+      </div>
+
+
+      <!-- Tabla de períodos inactivos -->
+      <div *ngIf="showInactiveTable"
+        class="mt-6 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+        <table class="min-w-full text-left text-sm text-gray-500 dark:text-gray-400">
+          <thead class="bg-gray-50 dark:bg-gray-700">
+            <tr>
+              <th scope="col" class="px-6 py-3">Nombre</th>
+              <th scope="col" class="px-6 py-3">Fecha de Inicio</th>
+              <th scope="col" class="px-6 py-3">Fecha de Fin</th>
+              <th scope="col" class="px-6 py-3">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let period of inactivePeriods" class="bg-white dark:bg-gray-800">
+              <td class="px-6 py-4">{{ period.name }}</td>
+              <td class="px-6 py-4">{{ period.startDate | date: 'yyyy-MM-dd' }}</td>
+              <td class="px-6 py-4">{{ period.endDate | date: 'yyyy-MM-dd' }}</td>
+              <td class="px-6 py-4">
+                <button (click)="activatePeriod(period.id)"
+                  class="px-3 py-2 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300">
+                  Activar
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,108 @@
+<section class="bg-white py-6 antialiased dark:bg-gray-900 rounded-lg">
+    <div class="mx-auto max-w-md px-4">
+        <!-- Título -->
+        <div class="text-center mb-6">
+            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+                Perfil de Usuario
+            </h2>
+            <p class="text-gray-500 dark:text-gray-400 text-sm">
+                Visualiza la información básica del usuario.
+            </p>
+        </div>
+
+        <!-- Imagen de perfil -->
+        <div class="relative flex justify-center mb-6">
+            <div class="w-32 h-32 rounded-full mb-2 pt-1 overflow-hidden">
+                <p-image [src]="imagePreview ? imagePreview : apiUrl + user.imageUrl" alt="Imagen de perfil"
+                    [preview]="true" appendTo="body" class="w-full h-full object-cover" />
+            </div>
+
+            <label *ngIf="isEditing"
+                class="absolute bottom-0 right-0 cursor-pointer bg-blue-600 rounded-full p-2 hover:bg-blue-700">
+                <input type="file" (change)="onImageSelected($event)" accept="image/jpeg, image/jpg, image/png" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white"
+                    class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M15.232 5.232l3.536 3.536m-2.036-5.036A2.5 2.5 0 0118.5 8.5L7.5 19.5H3v-4.5L14 3.5a2.5 2.5 0 013.5 0z" />
+                </svg>
+            </label>
+        </div>
+
+        <!-- Información del usuario -->
+        <div class="space-y-4">
+            <!-- Nombre -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-400">Nombre</label>
+                <input *ngIf="isEditing" type="text" [(ngModel)]="updatedData.name"
+                    [class]="'mt-1 px-3 py-2 bg-gray-50 border text-gray-900 rounded-lg shadow-sm w-full dark:bg-gray-800 dark:text-white ' + 
+                                (formErrors.name ? 'border-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-600')" />
+                <p *ngIf="isEditing && formErrors.name" class="mt-1 text-sm text-red-500 dark:text-red-400">
+                    {{ formErrors.name }}
+                </p>
+                <p *ngIf="!isEditing"
+                    class="mt-1 px-3 py-2 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg shadow-sm dark:bg-gray-800 dark:text-white dark:border-gray-600">
+                    {{ user.name }}
+                </p>
+            </div>
+
+            <!-- Apellido -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-400">Apellido</label>
+                <input *ngIf="isEditing" type="text" [(ngModel)]="updatedData.lastName"
+                    [class]="'mt-1 px-3 py-2 bg-gray-50 border text-gray-900 rounded-lg shadow-sm w-full dark:bg-gray-800 dark:text-white ' + 
+                    (formErrors.lastName ? 'border-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-600')" />
+                <p *ngIf="isEditing && formErrors.lastName" class="mt-1 text-sm text-red-500 dark:text-red-400">
+                    {{ formErrors.lastName }}
+                </p>
+                <p *ngIf="!isEditing"
+                    class="mt-1 px-3 py-2 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg shadow-sm dark:bg-gray-800 dark:text-white dark:border-gray-600">
+                    {{ user.lastName }}
+                </p>
+            </div>
+
+            <!-- Correo -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-400">Correo Institucional</label>
+                <input *ngIf="isEditing" type="email" [(ngModel)]="updatedData.email"
+                    [class]="'mt-1 px-3 py-2 bg-gray-50 border text-gray-900 rounded-lg shadow-sm w-full dark:bg-gray-800 dark:text-white ' + 
+                                (formErrors.email ? 'border-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-600')" />
+                <p *ngIf="isEditing && formErrors.email" class="mt-1 text-sm text-red-500 dark:text-red-400">
+                    {{ formErrors.email }}
+                </p>
+                <p *ngIf="!isEditing"
+                    class="mt-1 px-3 py-2 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg shadow-sm dark:bg-gray-800 dark:text-white dark:border-gray-600">
+                    {{ user.email }}
+                </p>
+            </div>
+
+            <!-- Contraseña -->
+            <div *ngIf="isEditing">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-400">Nueva Contraseña</label>
+                <input type="password" [(ngModel)]="updatedData.password"
+                    [class]="'mt-1 px-3 py-2 bg-gray-50 border text-gray-900 rounded-lg shadow-sm w-full dark:bg-gray-800 dark:text-white ' + 
+                                (formErrors.password ? 'border-red-500 dark:border-red-400' : 'border-gray-300 dark:border-gray-600')" />
+                <p *ngIf="formErrors.password" class="mt-1 text-sm text-red-500 dark:text-red-400">
+                    {{ formErrors.password }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="mt-6 text-center">
+            <button *ngIf="!isEditing" type="button" (click)="startEditing()"
+                class="px-6 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg shadow hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                Actualizar Usuario
+            </button>
+            <div *ngIf="isEditing" class="flex justify-center gap-4">
+                <button type="button" (click)="saveChanges()"
+                    class="px-6 py-2 text-sm font-medium text-white bg-green-600 rounded-lg shadow hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 dark:bg-green-700 dark:hover:bg-green-800 dark:focus:ring-green-800">
+                    Guardar
+                </button>
+                <button type="button" (click)="cancelEditing()"
+                    class="px-6 py-2 text-sm font-medium text-white bg-gray-600 rounded-lg shadow hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:bg-gray-700 dark:hover:bg-gray-800 dark:focus:ring-gray-800">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</section>

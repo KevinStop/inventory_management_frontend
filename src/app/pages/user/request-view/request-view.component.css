@@ -1,0 +1,110 @@
+/* Estilos para la tabla */
+:host ::ng-deep .custom-table {
+  @apply bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600;
+}
+
+:host ::ng-deep .custom-table .p-datatable-wrapper {
+  @apply bg-white dark:bg-gray-800;
+}
+
+:host ::ng-deep .custom-table .p-datatable-header {
+  @apply bg-white dark:bg-gray-800;
+}
+
+:host ::ng-deep .custom-table .p-datatable-thead > tr > th {
+  @apply bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white border-gray-200 dark:border-gray-600;
+}
+
+:host ::ng-deep .custom-table .p-datatable-tbody > tr {
+  @apply bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600;
+}
+
+:host ::ng-deep .custom-table .p-datatable-tbody > tr:hover {
+  @apply bg-gray-50 dark:bg-gray-700;
+}
+
+/* Estilos para el paginador */
+:host ::ng-deep .p-paginator {
+  @apply bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600;
+  position: relative;
+  z-index: 1;
+}
+
+:host ::ng-deep .p-paginator .p-paginator-pages .p-paginator-page {
+  @apply text-gray-700 dark:text-gray-300;
+}
+
+:host ::ng-deep .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  @apply bg-blue-700 text-white;
+}
+
+:host ::ng-deep .p-paginator .p-dropdown {
+  @apply bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600;
+}
+
+:host ::ng-deep .p-paginator .p-dropdown-panel {
+  @apply bg-white dark:bg-gray-700;
+  z-index: 100;
+}
+
+:host ::ng-deep .p-paginator .p-dropdown-items {
+  @apply bg-white dark:bg-gray-700;
+}
+
+:host ::ng-deep .p-paginator .p-dropdown-item {
+  @apply text-gray-700 dark:text-gray-300;
+}
+
+:host ::ng-deep .p-paginator .p-dropdown-item:hover {
+  @apply bg-gray-100 dark:bg-gray-600;
+}
+
+/* Arreglo para el dropdown de paginación */
+:host ::ng-deep .p-dropdown-panel {
+  position: absolute !important;
+  top: 100% !important;
+}
+
+:host ::ng-deep .p-paginator .p-dropdown {
+  height: 2rem;
+}
+
+/* Estilos para el texto del paginador */
+:host ::ng-deep .p-paginator .p-paginator-current {
+  @apply text-gray-700 dark:text-gray-300;
+}
+
+/* Estilos para los botones de navegación */
+:host ::ng-deep .p-paginator .p-paginator-first,
+:host ::ng-deep .p-paginator .p-paginator-prev,
+:host ::ng-deep .p-paginator .p-paginator-next,
+:host ::ng-deep .p-paginator .p-paginator-last {
+  @apply text-gray-700 dark:text-gray-300;
+}
+
+:host ::ng-deep .p-paginator .p-paginator-first:hover,
+:host ::ng-deep .p-paginator .p-paginator-prev:hover,
+:host ::ng-deep .p-paginator .p-paginator-next:hover,
+:host ::ng-deep .p-paginator .p-paginator-last:hover {
+  @apply bg-gray-100 dark:bg-gray-600;
+}
+
+/* Añadir para mejor manejo de z-index */
+:host ::ng-deep .p-datatable {
+  position: relative;
+  z-index: 0;
+}
+
+/* Añadir para mejorar la consistencia del dropdown */
+:host
+  ::ng-deep
+  .p-dropdown-panel
+  .p-dropdown-items
+  .p-dropdown-item.p-highlight {
+  @apply bg-blue-700 text-white;
+}
+
+/* Añadir para mejorar la accesibilidad en modo oscuro */
+:host ::ng-deep .p-paginator .p-paginator-pages .p-paginator-page:focus {
+  @apply ring-2 ring-blue-500 dark:ring-blue-400;
+}

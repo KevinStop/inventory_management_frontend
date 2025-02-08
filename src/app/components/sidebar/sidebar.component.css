@@ -1,0 +1,18 @@
+/* Clases para enlace activo */
+.active-link {
+  background-color: #2563eb; /* Azul para tema claro */
+  color: white; /* Texto blanco */
+  border-radius: 0.5rem; /* Bordes redondeados */
+  transition: all 0.3s ease-in-out;
+}
+
+/* Modo oscuro */
+.dark .active-link {
+  background-color: #1e3a8a; /* Azul oscuro */
+  color: white;
+}
+
+.mouseover:hover {
+  transform: scale(1.1); /* Escala ligeramente mayor al pasar el mouse */
+}
+

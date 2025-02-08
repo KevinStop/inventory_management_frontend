@@ -1,0 +1,194 @@
+<section class="bg-white py-8 dark:bg-gray-900 rounded-lg">
+  <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+    <div class="mx-auto max-w-5xl">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
+        Generación de Reportes
+      </h2>
+
+      <!-- Selección de tipo de reporte -->
+      <div class="mt-6">
+        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+          Seleccione el tipo de reporte
+        </label>
+        <select (change)="onReportTypeChange($event)"
+          class="w-full p-2.5 text-sm border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+          <option value="">Seleccione un tipo de reporte</option>
+          <option *ngFor="let report of availableReports" [value]="report.id">
+            {{ report.name }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Descripción del reporte seleccionado -->
+      <div *ngIf="selectedReport && showFilters" class="mt-4">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          {{ getReportDescription() }}
+        </p>
+      </div>
+
+      <!-- Formulario de filtros -->
+      <div *ngIf="showFilters" class="mt-8 bg-gray-100 dark:bg-gray-800 p-6 rounded-lg">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white text-center mb-4">Filtros del Reporte</h3>
+
+        <form [formGroup]="filterForm" (ngSubmit)="generateReport()" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div *ngIf="filterForm.get('startDate')" class="space-y-2">
+              <label for="startDate" class="block text-sm font-medium text-gray-900 dark:text-white">
+                Fecha inicial <span *ngIf="isFilterRequired('startDate')" class="text-red-500">*</span>
+              </label>
+              <input id="startDate" type="date" formControlName="startDate" class="w-full p-2 text-sm border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-primary-500 focus:border-primary-500 
+       [color-scheme:light] dark:[color-scheme:dark]
+       dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                [ngClass]="{'border-red-500': isFieldInvalid('startDate')}">
+              <p *ngIf="isFieldInvalid('startDate')" class="text-red-500 text-xs mt-1">La fecha inicial es requerida</p>
+            </div>
+
+            <div *ngIf="filterForm.get('endDate')" class="space-y-2">
+              <label for="endDate" class="block text-sm font-medium text-gray-900 dark:text-white">
+                Fecha final <span *ngIf="isFilterRequired('endDate')" class="text-red-500">*</span>
+              </label>
+              <input id="endDate" type="date" formControlName="endDate"
+                class="w-full p-2 text-sm border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-primary-500 focus:border-primary-500 
+                [color-scheme:light] dark:[color-scheme:dark]
+                dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                [ngClass]="{'border-red-500': isFieldInvalid('endDate') || filterForm.errors?.['dateRange']}">
+              <p *ngIf="isFieldInvalid('endDate')" class="text-red-500 text-xs mt-1">La fecha final es requerida</p>
+              <p *ngIf="filterForm.errors?.['dateRange']" class="text-red-500 text-xs mt-1">
+                La fecha final no puede ser menor a la fecha inicial
+              </p>
+            </div>
+          </div>
+
+          <div *ngFor="let filter of filterForm.controls | keyvalue">
+            <ng-container *ngIf="filter.key !== 'startDate' && filter.key !== 'endDate'">
+              <div class="space-y-2">
+                <label [for]="filter.key" class="block text-sm font-medium text-gray-900 dark:text-white">
+                  {{ getFilterLabel(filter.key) }}
+                  <span *ngIf="isFilterRequired(filter.key)" class="text-red-500">*</span>
+                </label>
+
+                <ng-container [ngSwitch]="getFilterType(filter.key)">
+                  <ng-container *ngSwitchCase="'select'">
+                    <ng-container *ngIf="filter.key === 'userId'">
+                      <div class="flex flex-col gap-2">
+                        <input type="text" [(ngModel)]="searchTerm" (input)="filterUsers()"
+                          [ngModelOptions]="{standalone: true}" placeholder="Buscar usuario por nombre..."
+                          class="w-full p-2.5 text-sm border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                        <select [formControlName]="filter.key"
+                        class="w-full p-2.5 text-sm border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 max-h-48 overflow-y-auto">
+                          <option value="">Seleccione un usuario</option>
+                          <option *ngFor="let user of filteredUsers" [value]="user.userId">{{ user.name }}</option>
+                        </select>
+                      </div>
+                    </ng-container>
+
+                    <ng-container *ngIf="filter.key !== 'userId'">
+                      <select [formControlName]="filter.key"
+                      class="w-full p-2.5 text-sm border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 max-h-48 overflow-y-auto">
+                        <option value="">Seleccione una opción</option>
+                        <ng-container [ngSwitch]="filter.key">
+                          <ng-container *ngSwitchCase="'status'">
+                            <option value="devuelto">Devuelto</option>
+                            <option value="no_devuelto">No Devuelto</option>
+                          </ng-container>
+                          <ng-container *ngSwitchCase="'movementType'">
+                            <option value="ingreso">Ingreso</option>
+                            <option value="egreso">Egreso</option>
+                          </ng-container>
+                          <ng-container *ngSwitchCase="'category'">
+                            <option *ngFor="let category of categories" [value]="category.name">{{ category.name }}
+                            </option>
+                          </ng-container>
+                          <ng-container *ngSwitchCase="'componentId'">
+                            <option *ngFor="let component of components" [value]="component.id">{{ component.name }}
+                            </option>
+                          </ng-container>
+                          <ng-container *ngSwitchCase="'academicPeriodId'">
+                            <option *ngFor="let period of academicPeriods" [value]="period.id">{{ period.name }}
+                            </option>
+                          </ng-container>
+                        </ng-container>
+                      </select>
+                    </ng-container>
+                  </ng-container>
+
+                  <input *ngSwitchDefault [formControlName]="filter.key"
+                    class="w-full p-2 text-sm border border-gray-300 rounded-lg"
+                    [ngClass]="{'border-red-500': isFieldInvalid(filter.key)}">
+                </ng-container>
+
+                <p *ngIf="isFieldInvalid(filter.key)" class="text-red-500 text-xs mt-1">Este campo es requerido</p>
+              </div>
+            </ng-container>
+          </div>
+
+          <div class="flex justify-end space-x-3 mt-6">
+            <button type="button" (click)="resetFilters()"
+              class="px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+              Limpiar Filtros
+            </button>
+            <button type="submit" [disabled]="isLoading || filterForm.invalid"
+              class="px-5 py-2 text-sm text-white bg-primary-600 rounded-lg hover:bg-primary-700 disabled:opacity-50">
+              <span *ngIf="!isLoading">Buscar</span>
+              <span *ngIf="isLoading" class="flex items-center">
+                <svg class="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none">
+                  </circle>
+                  <path class="opacity-75" fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                  </path>
+                </svg>
+                Buscando...
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Vista previa de resultados -->
+      <div *ngIf="previewData?.length" class="mt-8">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+            Vista previa de resultados
+          </h3>
+          <button (click)="generatePDF()"
+            class="px-4 py-2 text-sm text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300">
+            Generar PDF
+          </button>
+        </div>
+
+        <div class="card">
+          <!-- Component template -->
+          <p-table [value]="previewData" [rows]="5" [paginator]="true" [rowsPerPageOptions]="[5,10,20]"
+            [showCurrentPageReport]="true"
+            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+            styleClass="preview-table">
+
+            <ng-template pTemplate="header">
+              <tr>
+                <th *ngFor="let header of previewHeaders" class="px-6 py-3">
+                  {{header}}
+                </th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-row>
+              <tr>
+                <td *ngFor="let cell of row" class="px-6 py-4">
+                  {{cell}}
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+
+      <!-- Mensaje cuando no hay resultados -->
+      <div *ngIf="previewData?.length === 0" class="mt-8 text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+        <p class="text-gray-600 dark:text-gray-400">
+          No se encontraron resultados para los filtros seleccionados
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,241 @@
+<section class="bg-white py-8 antialiased dark:bg-gray-900 rounded-lg">
+    <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+        <div class="mx-auto max-w-5xl">
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Ingreso y egreso de componentes
+            </h2>
+
+            <div class="mt-6 sm:mt-8 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div class="col-1">
+                    <form action="#"
+                        class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6 lg:p-8">
+                        <div class="relative w-full mb-6">
+                            <label for="simple-search" class="sr-only">Buscar</label>
+                            <div class="flex items-center">
+                                <!-- Dropdown -->
+                                <div class="relative">
+                                    <button id="dropdown-button" (click)="toggleTypeDropdown()"
+                                        class="flex-shrink-0 z-10 inline-flex items-center py-2 px-3 text-sm font-medium text-center text-gray-900 bg-gray-200 border border-gray-300 rounded-l-lg hover:bg-gray-300 focus:ring-2 focus:outline-none focus:ring-primary-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600">
+                                        {{ selectedType }}
+                                        <svg class="w-4 h-4 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                            fill="none" viewBox="0 0 10 6">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                stroke-width="2" d="M1 1l4 4 4-4" />
+                                        </svg>
+                                    </button>
+                                    <div *ngIf="showTypeDropdown"
+                                        class="z-10 absolute bg-white divide-y divide-gray-100 rounded-lg shadow w-24 dark:bg-gray-700">
+                                        <ul class="py-1 text-sm text-gray-700 dark:text-gray-200"
+                                            aria-labelledby="dropdown-button">
+                                            <li>
+                                                <button type="button" (click)="selectType('Ingreso')"
+                                                    class="block px-4 py-2 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                    Ingreso
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button type="button" (click)="selectType('Egreso')"
+                                                    class="block px-4 py-2 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                                    Egreso
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="relative w-full" (click)="$event.stopPropagation()">
+                                    <input type="text" id="simple-search" name="simple-search"
+                                        placeholder="Buscar componentes" [(ngModel)]="searchTerm"
+                                        (focus)="toggleComponentList(true)" (input)="searchComponents()"
+                                        autocomplete="off"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-r-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" />
+                                    <!-- Component List -->
+                                    <div *ngIf="showComponentList"
+                                        class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg dark:bg-gray-700 dark:border-gray-600">
+                                        <!-- List of Components -->
+                                        <ul class="max-h-48 overflow-y-auto">
+                                            <li *ngFor="let component of components"
+                                                (click)="selectComponent(component)"
+                                                class="px-4 py-2 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600 text-sm cursor-pointer">
+                                                {{ component.name }}
+                                            </li>
+                                        </ul>
+                                        <!-- Static Option -->
+                                        <div *ngIf="selectedType === 'Ingreso'"
+                                            class="border-t border-gray-300 dark:border-gray-600">
+                                            <button type="button" (click)="openAddComponentForm()"
+                                                class="block w-full text-left px-4 py-2 text-sm text-primary-600 dark:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
+                                                + Agregar nuevo componente
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div *ngIf="!isAddingComponent" class="mb-6">
+                            <label for="full_name" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                                Cantidad
+                            </label>
+                            <input type="number" id="full_name" [(ngModel)]="quantity" name="full_name" step="1"
+                                (input)="onQuantityChange()"
+                                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                                [class.border-red-500]="!quantityValid && showErrors"
+                                placeholder="Cantidad de componentes" required />
+                            <p *ngIf="!quantityValid && showErrors" class="text-sm text-red-500 mt-2">
+                                La cantidad es obligatoria y debe ser mayor a 0.
+                            </p>
+                        </div>
+                        <div class="mb-6">
+                            <label for="reason-textarea"
+                                class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                                Razón
+                            </label>
+                            <textarea [(ngModel)]="reason" name="reason" id="reason" rows="4" (input)="onReasonChange()"
+                                class="bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5
+    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                [class.border-red-500]="!reasonValid && showErrors"
+                                placeholder="Describa la razón del movimiento"></textarea>
+                            <p *ngIf="!reasonValid && showErrors" class="text-sm text-red-500 mt-2">
+                                La razón es obligatoria.
+                            </p>
+                        </div>
+                        <button *ngIf="!isAddingComponent" type="button" (click)="submitMovement()"
+                            class="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                            Enviar
+                        </button>
+                    </form>
+                </div>
+
+                <div class="col-2">
+                    <div *ngIf="selectedComponent"
+                        class="rounded-lg border border-gray-100 bg-gray-50 p-6 dark:border-gray-700 dark:bg-gray-800">
+                        <div class="space-y-2">
+                            <dl class="flex items-center justify-between gap-4">
+                                <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Imagen</dt>
+                                <dd class="text-base font-medium text-gray-900 dark:text-white">
+                                    <p-image [src]="apiUrl + selectedComponent.imageUrl" 
+                                             [alt]="selectedComponent.name"
+                                             [preview]="true"
+                                             imageClass="h-8 w-auto mr-3">
+                                    </p-image>
+                                </dd>
+                            </dl>
+                            <dl class="flex items-center justify-between gap-4">
+                                <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Nombre</dt>
+                                <dd class="text-base font-medium text-gray-900 dark:text-white">{{
+                                    selectedComponent.name }}</dd>
+                            </dl>
+                            <dl class="flex items-center justify-between gap-4">
+                                <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Categoría</dt>
+                                <dd class="text-base font-medium text-green-500">{{ selectedComponent.category?.name }}
+                                </dd>
+                            </dl>
+                            <dl class="flex items-center justify-between gap-4">
+                                <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Cantidad</dt>
+                                <dd class="text-base font-medium text-gray-900 dark:text-white">{{
+                                    selectedComponent.quantity }}</dd>
+                            </dl>
+                            <dl class="flex items-center justify-between gap-4">
+                                <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Estado</dt>
+                                <dd class="text-base font-medium text-gray-900 dark:text-white">{{
+                                    selectedComponent.isActive ? 'Activo' : 'Inactivo' }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <div *ngIf="isAddingComponent"
+                        class="rounded-lg border border-gray-100 bg-gray-50 p-6 dark:border-gray-700 dark:bg-gray-800">
+                        <div class="pb-4 mb-4 border-b border-gray-200 dark:border-gray-600">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Agregar Componente</h3>
+                        </div>
+                        <form (ngSubmit)="createComponent()" enctype="multipart/form-data" class="space-y-4">
+                            <div>
+                                <label for="name"
+                                    class="block mb-2 text-base font-medium text-gray-900 dark:text-white">
+                                    Nombre
+                                </label>
+                                <input type="text" [(ngModel)]="newComponent.name" name="name" id="name"
+                                    (input)="onNameChange()"
+                                    class="bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5
+                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    [class.border-red-500]="!nameValid && showErrors" placeholder="Nombre" required>
+                                <p *ngIf="!nameValid && showErrors" class="text-sm text-red-500 mt-2">
+                                    El nombre es obligatorio.
+                                </p>
+                            </div>
+
+                            <div>
+                                <label for="category"
+                                    class="block mb-2 text-base font-medium text-gray-900 dark:text-white">
+                                    Categoría
+                                </label>
+                                <select [(ngModel)]="newComponent.categoryId" id="category" name="category"
+                                    (change)="onCategoryChange()"
+                                    class="bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5
+                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    [class.border-red-500]="!categoryValid && showErrors">
+                                    <option value="" disabled selected>Seleccione una categoría</option>
+                                    <option *ngFor="let category of categories" [value]="category.id">{{ category.name
+                                        }}</option>
+                                </select>
+                                <p *ngIf="!categoryValid && showErrors" class="text-sm text-red-500 mt-2">
+                                    Seleccione una categoría.
+                                </p>
+                            </div>
+
+                            <div>
+                                <label for="quantity"
+                                    class="block mb-2 text-base font-medium text-gray-900 dark:text-white">
+                                    Cantidad
+                                </label>
+                                <input type="number" [(ngModel)]="newComponent.quantity" name="quantity" id="quantity"
+                                    step="1" (input)="onQuantityChange2()"
+                                    class="bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5
+                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    [class.border-red-500]="!quantityValid && showErrors"
+                                    placeholder="Cantidad Componentes" required>
+                                <p *ngIf="!quantityValid2 && showErrors" class="text-sm text-red-500 mt-2">
+                                    La cantidad es obligatoria y debe ser mayor a 0.
+                                </p>
+                            </div>
+
+                            <div>
+                                <label for="description"
+                                    class="block mb-2 text-base font-medium text-gray-900 dark:text-white">
+                                    Descripción
+                                </label>
+                                <textarea [(ngModel)]="newComponent.description" name="description" id="description"
+                                    rows="4" (input)="onDescriptionChange()"
+                                    class="bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5
+                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    [class.border-red-500]="!descriptionValid && showErrors"
+                                    placeholder="Escribe la descripción aquí"></textarea>
+                                <p *ngIf="!descriptionValid && showErrors" class="text-sm text-red-500 mt-2">
+                                    La descripción es obligatoria.
+                                </p>
+                            </div>
+                            <div>
+                                <span class="block mb-2 text-base font-medium text-gray-900 dark:text-white">
+                                    Imagen de Componente
+                                </span>
+                                <input id="comprobante" type="file" accept=".png, .jpg, .jpeg, .pdf" 
+                                (change)="onImageSelected($event)" name="componente"
+                                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" />
+                                <p *ngIf="!imageValid && showErrors" class="text-sm text-red-500 mt-2">
+                                    La imagen es obligatoria.
+                                </p>
+                            </div>
+                            <div class="flex justify-between">
+                                <button type="submit"
+                                    class="px-5 py-2.5 bg-primary-700 text-white text-sm font-medium rounded-lg hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                    Agregar Componente
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/datepicker.min.js"></script>

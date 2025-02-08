@@ -1,0 +1,18 @@
+<div class="min-h-screen bg-gray-300 dark:bg-gray-600 overflow-x-hidden">
+  <app-sidebar />
+  <div class="transition-all duration-300 ease-in-out 
+              pb-4 pt-2 
+              sm:ml-64 xl:ml-72 
+              px-2 sm:px-4 xl:px-6 
+              min-h-screen flex flex-col 
+              relative
+              w-[calc(100%-0.5rem)]
+              sm:w-[calc(100%-16rem)]
+              xl:w-[calc(100%-18rem)]">
+    <app-header />
+    <div class="mt-2 mb-2 flex-grow">
+      <router-outlet />
+    </div>
+    <app-footer />
+  </div>
+</div>

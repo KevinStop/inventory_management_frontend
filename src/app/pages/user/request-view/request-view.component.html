@@ -1,0 +1,103 @@
+<section class="bg-white py-5 antialiased dark:bg-gray-900 rounded-lg">
+  <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+    <div class="mx-auto max-w-5xl">
+      <!-- Encabezado -->
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
+          Todas las Solicitudes
+        </h2>
+        <div>
+          <label for="statusFilter" class="sr-only">Filtrar por estado</label>
+          <select id="statusFilter" [(ngModel)]="selectedStatus" (change)="onStatusChange($event)"
+            class="block w-full md:w-auto rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:ring-primary-500 focus:border-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+            <option value="pendiente">Pendiente</option>
+            <option value="prestamo">En préstamo</option>
+            <option value="finalizado">Finalizado</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Espaciado -->
+      <div class="mt-8"></div>
+
+      <!-- Tabla -->
+      <p-table [value]="filteredRequests" [rows]="5" [paginator]="true" [rowsPerPageOptions]="[5,10,20]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} solicitudes"
+        [tableStyle]="{'min-width': '100%'}" styleClass="custom-table">
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th
+              class="px-6 py-3 bg-gray-50 dark:bg-gray-700 text-sm font-semibold text-gray-900 dark:text-white border-b dark:border-gray-600">
+              Solicitud
+            </th>
+            <th
+              class="flex justify-center px-6 py-3 bg-gray-50 dark:bg-gray-700 text-sm font-semibold text-gray-900 dark:text-white border-b dark:border-gray-600 text-center">
+              Acciones
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-request>
+          <tr class="dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
+            <td class="px-6 py-4 text-gray-700 dark:text-gray-300 border-b dark:border-gray-600">
+              {{ 'Solicitud #' + request.displayId }}
+            </td>
+            <td class="px-6 py-4 border-b dark:border-gray-600">
+              <div class="flex justify-center gap-4">
+                <button type="button" (click)="openModal(request)" *ngIf="request.status === 'prestamo'"
+                  class="flex items-center justify-center rounded-lg bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                  Solicitar Plazo
+                </button>
+                <button type="button" (click)="goToDetails(request.requestId)"
+                  class="flex items-center justify-center rounded-lg bg-gray-700 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
+                  Ver Detalles
+                </button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div *ngIf="isModalOpen"
+    class="fixed top-0 left-0 right-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
+    <div class="bg-white rounded-lg shadow-lg dark:bg-gray-700 max-w-md w-full">
+      <!-- Modal header -->
+      <div class="flex items-start justify-between p-4 border-b border-gray-200 dark:border-gray-600">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+          Solicitar Aplazamiento
+        </h3>
+        <button (click)="closeModal()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd"
+              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+              clip-rule="evenodd"></path>
+          </svg>
+        </button>
+      </div>
+      <!-- Modal body -->
+      <div class="p-6">
+        <label for="postponeDate" class="block text-sm font-medium text-gray-900 dark:text-white mb-2">Fecha de
+          Aplazamiento</label>
+        <input type="date" id="postponeDate" [(ngModel)]="selectedDate" (input)="validateDate()"
+          class="block w-full p-2.5 border rounded-lg text-sm text-gray-900 bg-gray-50 border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+        <p *ngIf="dateError" class="mt-2 text-sm text-red-600 dark:text-red-400">{{ dateError }}</p>
+      </div>
+      <!-- Modal footer -->
+      <div class="flex justify-end p-4 border-t border-gray-200 dark:border-gray-600">
+        <button (click)="closeModal()"
+          class="mr-5 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-700">
+          Cancelar
+        </button>
+        <button [disabled]="!isDateValid" (click)="submitReturnDate()"
+          class="px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:opacity-50 disabled:cursor-not-allowed">
+          Solicitar
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

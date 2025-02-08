@@ -1,0 +1,223 @@
+<button data-drawer-target="default-sidebar" data-drawer-toggle="default-sidebar" aria-controls="default-sidebar"
+  type="button"
+  class="fixed top-4 left-4 z-50
+         inline-flex items-center p-2 
+         text-sm text-gray-500 
+         rounded-lg 
+         sm:hidden 
+         hover:bg-gray-100 
+         focus:outline-none focus:ring-2 focus:ring-gray-200 
+         dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600
+         transition-all duration-300">
+  <span class="sr-only">Open sidebar</span>
+  <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+    <path clip-rule="evenodd" fill-rule="evenodd"
+      d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z">
+    </path>
+  </svg>
+</button>
+
+<aside 
+  id="default-sidebar"
+  class="fixed z-40 
+         transition-transform duration-300 ease-in-out
+         h-[calc(100vh-1rem)] 
+         
+         /* Posicionamiento */
+         top-2 left-2 bottom-2
+         
+         /* Ancho responsivo */
+         w-64 xl:w-72
+         
+         /* Transformación responsiva */
+         -translate-x-full sm:translate-x-0
+         
+         /* Estilo visual */
+         bg-white dark:bg-gray-800
+         rounded-lg shadow-lg
+         
+         /* Scroll interno si el contenido es muy largo */
+         overflow-y-auto
+         scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100
+         dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-700"
+  aria-label="Sidenav">
+  <div
+    class="overflow-y-auto py-5 px-3 h-full bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700 rounded-lg">
+    <ul class="space-y-2 relative flex flex-col items-center">
+      <li class="w-24 h-24 rounded-full mb-2 pt-1 overflow-hidden">
+        <p-image [src]="apiUrl + user.imageUrl" alt="Image" [preview]="true" appendTo="body"
+          class="w-full h-full object-cover" />
+      </li>
+      <li>
+        <p class="font-sans text-lg font-semibold leading-relaxed text-gray-900 dark:text-white">
+          {{ user.name }} {{user.lastName}}
+        </p>
+      </li>
+      <li>
+        <p class="font-sans text-sm leading-relaxed pb-2 text-gray-600 dark:text-gray-400">
+          {{ user.email }}
+        </p>
+      </li>
+      <li>
+        <div class="flex gap-6">
+          <button type="button" routerLink="/home/userProfile"
+            class="p-2 mr-1 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600">
+            <span class="sr-only">Ver perfil</span>
+            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+              width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+              <path fill-rule="evenodd"
+                d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm9.408-5.5a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2h-.01ZM10 10a1 1 0 1 0 0 2h1v3h-1a1 1 0 1 0 0 2h4a1 1 0 1 0 0-2h-1v-4a1 1 0 0 0-1-1h-2Z"
+                clip-rule="evenodd" />
+            </svg>
+          </button>
+          <button type="button" (click)="logout()"
+            class="p-2 mr-1 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600">
+            <span class="sr-only">Cerrar sesión</span>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
+              <path
+                d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15h-1.5v3.75c0 .414-.336.75-.75.75h-6a.75.75 0 01-.75-.75V5.25c0-.414.336-.75.75-.75h6c.414 0 .75.336.75.75V9h1.5Zm0 0L19.5 12l-3.75 3V13.5h-6v-3h6V9Z" />
+            </svg>
+          </button>
+        </div>
+      </li>
+    </ul>
+    <ul class="pt-5 mt-5 max-w-60 space-y-2 border-t border-gray-200 dark:border-gray-700">
+      
+      <li *ngIf="isAdmin()">
+        <a routerLink="/home/electronicComponent" routerLinkActive="active-link" data-drawer-hide="default-sidebar"
+          class="mouseover flex items-center p-2 text-base font-normal text-gray-900 rounded-lg transition-all duration-300 ease-in-out hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group">
+          <svg
+            class="w-6 h-6 text-gray-800 dark:text-white transition-all duration-300 ease-in-out group-hover:scale-110"
+            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+            viewBox="0 0 24 24">
+            <path fill-rule="evenodd"
+              d="M12 8a1 1 0 0 0-1 1v10H9a1 1 0 1 0 0 2h11a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-8Zm4 10a2 2 0 1 1 0-4 2 2 0 0 1 0 4Z"
+              clip-rule="evenodd" />
+            <path fill-rule="evenodd"
+              d="M5 3a2 2 0 0 0-2 2v6h6V9a3 3 0 0 1 3-3h8c.35 0 .687.06 1 .17V5a2 2 0 0 0-2-2H5Zm4 10H3v2a2 2 0 0 0 2 2h4v-4Z"
+              clip-rule="evenodd" />
+          </svg>
+          <span class="ml-3">Componentes Electrónicos</span>
+        </a>
+      </li>
+      <li *ngIf="isAdmin()">
+        <a routerLink="/home/academicPeriods" data-drawer-hide="default-sidebar" routerLinkActive="active-link"
+          class="mouseover flex items-center p-2 text-base font-normal text-gray-900 rounded-lg transition-all duration-300 ease-in-out hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group">
+          <svg
+            class="w-6 h-6 text-gray-800 dark:text-white transition-all duration-300 ease-in-out group-hover:scale-110"
+            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+            viewBox="0 0 24 24">
+            <path fill-rule="evenodd"
+              d="M12.512 8.72a2.46 2.46 0 0 1 3.479 0 2.461 2.461 0 0 1 0 3.479l-.004.005-1.094 1.08a.998.998 0 0 0-.194-.272l-3-3a1 1 0 0 0-.272-.193l1.085-1.1Zm-2.415 2.445L7.28 14.017a1 1 0 0 0-.289.702v2a1 1 0 0 0 1 1h2a1 1 0 0 0 .703-.288l2.851-2.816a.995.995 0 0 1-.26-.189l-3-3a.998.998 0 0 1-.19-.26Z"
+              clip-rule="evenodd" />
+            <path fill-rule="evenodd"
+              d="M7 3a1 1 0 0 1 1 1v1h3V4a1 1 0 1 1 2 0v1h3V4a1 1 0 1 1 2 0v1h1a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h1V4a1 1 0 0 1 1-1Zm10.67 8H19v8H5v-8h3.855l.53-.537a1 1 0 0 1 .87-.285c.097.015.233.13.277.087.045-.043-.073-.18-.09-.276a1 1 0 0 1 .274-.873l1.09-1.104a3.46 3.46 0 0 1 4.892 0l.001.002A3.461 3.461 0 0 1 17.67 11Z"
+              clip-rule="evenodd" />
+          </svg>
+          <span class="ml-3">Periodos Académicos</span>
+        </a>
+      </li>
+      <li *ngIf="isAdmin()">
+        <a routerLink="/home/request" data-drawer-hide="default-sidebar" routerLinkActive="active-link"
+          class="mouseover flex items-center p-2 text-base font-normal text-gray-900 rounded-lg transition-all duration-300 ease-in-out hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group">
+          <svg
+            class="w-6 h-6 text-gray-800 dark:text-white transition-all duration-300 ease-in-out group-hover:scale-110"
+            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+            viewBox="0 0 24 24">
+            <path fill-rule="evenodd"
+              d="M8 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1h2a2 2 0 0 1 2 2v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2Zm6 1h-4v2H9a1 1 0 0 0 0 2h6a1 1 0 1 0 0-2h-1V4Zm-3 8a1 1 0 0 1 1-1h3a1 1 0 1 1 0 2h-3a1 1 0 0 1-1-1Zm-2-1a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H9Zm2 5a1 1 0 0 1 1-1h3a1 1 0 1 1 0 2h-3a1 1 0 0 1-1-1Zm-2-1a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H9Z"
+              clip-rule="evenodd" />
+          </svg>
+          <span class="ml-3">Solicitudes</span>
+        </a>
+      </li>
+      <li *ngIf="isAdmin()">
+        <a routerLink="/home/loans" data-drawer-hide="default-sidebar" routerLinkActive="active-link"
+          class="mouseover flex items-center p-2 text-base font-normal text-gray-900 rounded-lg transition-all duration-300 ease-in-out hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group">
+          <svg
+            class="w-6 h-6 text-gray-800 dark:text-white transition-all duration-300 ease-in-out group-hover:scale-110"
+            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+            viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 8h6m-6 4h6m-6 4h6M6 3v18l2-2 2 2 2-2 2 2 2-2 2 2V3l-2 2-2-2-2 2-2-2-2 2-2-2Z" />
+          </svg>
+          <span class="ml-3">Reportes</span>
+        </a>
+      </li>
+      <li *ngIf="isAdmin()">
+        <a routerLink="/home/componentMovement" routerLinkActive="active-link" data-drawer-hide="default-sidebar"
+          class="mouseover flex items-center p-2 text-base font-normal text-gray-900 rounded-lg transition-all duration-300 ease-in-out hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group">
+          <svg
+            class="w-6 h-6 text-gray-800 dark:text-white transition-all duration-300 ease-in-out group-hover:scale-110"
+            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+            viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 15v3c0 .5523.44772 1 1 1h10.5M3 15v-4m0 4h11M3 11V6c0-.55228.44772-1 1-1h16c.5523 0 1 .44772 1 1v5M3 11h18m0 0v1M8 11v8m4-8v8m4-8v2m1 4h2m0 0h2m-2 0v2m0-2v-2" />
+          </svg>
+          <span class="ml-3">Ingreso/Egreso Componentes</span>
+        </a>
+      </li>
+      <li *ngIf="isAdmin()">
+        <a [href]="ocsUrl" target="_blank" data-drawer-hide="default-sidebar"
+          class="mouseover flex items-center p-2 text-base font-normal text-gray-900 rounded-lg transition-all duration-300 ease-in-out hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group">
+          <svg
+            class="w-6 h-6 text-gray-800 dark:text-white transition-all duration-300 ease-in-out group-hover:scale-110"
+            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+            viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 15v3c0 .5523.44772 1 1 1h10.5M3 15v-4m0 4h11M3 11V6c0-.55228.44772-1 1-1h16c.5523 0 1 .44772 1 1v5M3 11h18m0 0v1M8 11v8m4-8v8m4-8v2m1 4h2m0 0h2m-2 0v2m0-2v-2" />
+          </svg>
+          <span class="ml-3">OCS Inventory</span>
+        </a>
+      </li>
+      <li *ngIf="isUser()">
+        <a routerLink="/home/viewComponents" data-drawer-hide="default-sidebar" routerLinkActive="active-link"
+          class="mouseover flex items-center p-2 text-base font-normal text-gray-900 rounded-lg transition-all duration-300 ease-in-out hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group">
+          <svg
+            class="w-6 h-6 text-gray-800 dark:text-white transition-all duration-300 ease-in-out group-hover:scale-110"
+            fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd"
+              d="M20 10H4v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8ZM9 13v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1Z"
+              clip-rule="evenodd" />
+            <path d="M2 6a2 2 0 0 1 2-2h16a2 2 0 1 1 0 4H4a2 2 0 0 1-2-2Z" />
+          </svg>
+          <span class="ml-3">Componentes electrónicos</span>
+        </a>
+      </li>
+      <li *ngIf="isUser()">
+        <a routerLink="/home/loansSummary" data-drawer-hide="default-sidebar" routerLinkActive="active-link"
+          class="mouseover flex items-center p-2 text-base font-normal text-gray-900 rounded-lg transition-all duration-300 ease-in-out hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group">
+          <svg aria-hidden="true"
+            class="w-6 h-6 text-gray-800 dark:text-white transition-all duration-300 ease-in-out group-hover:scale-110"
+            fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L11 7.586V3a1 1 0 10-2 0v4.586l-.293-.293z">
+            </path>
+            <path
+              d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z">
+            </path>
+          </svg>
+          <span class="flex-1 ml-3 whitespace-nowrap">Solicitud en proceso</span>
+          <span
+            class="inline-flex justify-center items-center w-5 h-5 text-xs font-semibold rounded-full text-primary-800 bg-primary-100 dark:bg-primary-200 dark:text-primary-800">
+            {{ selectedComponentCount }}
+          </span>
+        </a>
+      </li>
+      <li *ngIf="isUser()">
+        <a routerLink="/home/requestView" data-drawer-hide="default-sidebar" routerLinkActive="active-link"
+          class="mouseover flex items-center p-2 text-base font-normal text-gray-900 rounded-lg transition-all duration-300 ease-in-out hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group">
+          <svg
+            class="w-6 h-6 text-gray-800 dark:text-white transition-all duration-300 ease-in-out group-hover:scale-110"
+            fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd"
+              d="M20 10H4v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8ZM9 13v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1Z"
+              clip-rule="evenodd" />
+            <path d="M2 6a2 2 0 0 1 2-2h16a2 2 0 1 1 0 4H4a2 2 0 0 1-2-2Z" />
+          </svg>
+          <span class="ml-3">Solicitudes realizadas</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</aside>
